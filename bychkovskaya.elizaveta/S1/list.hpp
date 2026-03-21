@@ -41,3 +41,28 @@ List<T>* clear(List<T>* fake) noexcept {     //очистить память
 	return fake;
 }
 
+template< class T >
+List<T>* copy(const List<T>* fake) {
+	List<T>* curr = fake->next;
+	List<T>* cpfake = new_fake();   //если исключение то все ок
+	List<T>* prev = cpfake;
+	while (curr != fake) {
+		try {
+			List<T>* n = new List<T>{ curr->val, cpfake };
+			prev->next = n;
+			prev = n;
+			curr = curr->next;
+		}
+		catch (const std::bad_alloc&) {
+			List<T>* cpcurr = cpfake->next;
+			while (cpcurr != cpfake) {
+				List<T>* temp = cpcurr->next;
+				delete cpcurr;
+				cpcurr = temp;
+			}
+			delete cpfake;
+			throw;
+		}
+	}
+	return cpfake;
+}
