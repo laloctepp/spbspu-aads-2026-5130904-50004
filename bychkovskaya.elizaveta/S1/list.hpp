@@ -30,7 +30,7 @@ Node<T>* erase_after(Node<T>* f) noexcept { 	//удалить после
 }
 
 template< class T >
-Node<T>* clear(Node<T>* fake) noexcept {     //очистить память
+void List<T>::clear() noexcept {     //очистить память
 	Node<T>* curr = fake->next;
 	while (curr != fake) {
 		Node<T>* n = curr->next;
@@ -38,7 +38,6 @@ Node<T>* clear(Node<T>* fake) noexcept {     //очистить память
 		curr = n;
 	}
 	fake->next = fake;
-	return fake;
 }
 
 template< class T >
@@ -75,7 +74,11 @@ template< class T > struct List {
 	LIter<T> end() {
 		return LIter(fake);
 	}
-
+	void clear() noexcept;
+	List()~ {
+		clear();
+		::operator delete(fake); 
+	}
 };
 
 template < class T >
