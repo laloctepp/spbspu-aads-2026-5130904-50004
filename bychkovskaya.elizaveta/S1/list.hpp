@@ -66,3 +66,68 @@ Node<T>* copy(const Node<T>* fake) {
 	}
 	return cpfake;
 }
+
+template< class T > struct List {
+	Node<T>* fake;
+	LIter<T> begin() {
+		return LIter(fake->next);
+	}
+	LIter<T> end() {
+		return LIter(fake);
+	}
+
+};
+
+template < class T >
+struct LIter {
+private:
+	friend class List<T>;
+	Node<T>* node;
+
+public:
+	LIter() : node(nullptr) {};
+	LIter(Node<T>* n) : node(n) {};
+	LIter< T >& operator++();
+	LIter< T > operator++(int);
+	bool operator!=(LIter< T >) const;
+	bool operator==(LIter< T >) const;
+	T& operator*() const;
+	T* operator->() const;
+};
+
+template< class T >
+LIter< T >& LIter< T >::operator++() {
+	assert(node != nullptr);
+	node = node->next;
+	return *this;
+}
+
+template< class T >
+LIter< T > LIter< T >::operator++(int) {
+	assert(node != nullptr);
+	LIter< T > result(*this);
+	++(*this);
+	return result;
+}
+
+template< class T >
+bool LIter< T >::operator==(LIter< T > rhs) const {
+	return node == rhs.node;
+}
+
+template< class T >
+bool LIter< T >::operator!=(LIter< T > rhs) const {
+	return !(rhs == *this);
+}
+
+template< class T >
+T& LIter< T >::operator*() const {
+	assert(node != nullptr);
+	return node->val;
+}
+template< class T >
+T* LIter< T >::operator->() const {
+	assert(node != nullptr);
+	return std::addressof(node->val);
+}
+
