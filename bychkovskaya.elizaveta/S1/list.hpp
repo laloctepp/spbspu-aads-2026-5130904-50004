@@ -29,6 +29,22 @@ Node<T>* erase_after(Node<T>* f) noexcept { 	//удалить после
 	return subh;   //возвращаем указатель на элемент до которого удалили
 }
 
+template< class T > struct List {
+	Node<T>* fake;
+	LIter<T> begin() {
+		return LIter(fake->next);
+	}
+	LIter<T> end() {
+		return LIter(fake);
+	}
+	void clear() noexcept;
+	~List() {
+		clear();
+		::operator delete(fake); 
+	}
+	List(const List& other);
+};
+
 template< class T >
 void List<T>::clear() noexcept {     //очистить память
 	Node<T>* curr = fake->next;
@@ -41,45 +57,30 @@ void List<T>::clear() noexcept {     //очистить память
 }
 
 template< class T >
-Node<T>* copy(const Node<T>* fake) {
-	Node<T>* curr = fake->next;
-	Node<T>* cpfake = new_fake();   //если исключение то все ок
-	Node<T>* prev = cpfake;
-	while (curr != fake) {
+List<T>::List(const List& other) {
+	this->fake = new_fake<T>();
+	Node<T>* cpcurr = other.fake->next;
+	Node<T>* cpfake = other.fake;   
+	Node<T>* prev = this->fake;
+	while (cpcurr != cpfake) {
 		try {
-			Node<T>* n = new Node<T>{ curr->val, cpfake };
+			Node<T>* n = new Node<T>{ cpcurr->val, fake };
 			prev->next = n;
 			prev = n;
-			curr = curr->next;
+			cpcurr = cpcurr->next;
 		}
 		catch (const std::bad_alloc&) {
-			Node<T>* cpcurr = cpfake->next;
-			while (cpcurr != cpfake) {
-				Node<T>* temp = cpcurr->next;
-				delete cpcurr;
-				cpcurr = temp;
+			Node<T>* curr = fake->next;
+			while (curr != fake) {
+				Node<T>* temp = curr->next;
+				delete curr;
+				curr = temp;
 			}
-			delete cpfake;
+			::operator delete(fake);
 			throw;
 		}
 	}
-	return cpfake;
 }
-
-template< class T > struct List {
-	Node<T>* fake;
-	LIter<T> begin() {
-		return LIter(fake->next);
-	}
-	LIter<T> end() {
-		return LIter(fake);
-	}
-	void clear() noexcept;
-	List()~ {
-		clear();
-		::operator delete(fake); 
-	}
-};
 
 template < class T >
 struct LIter {
