@@ -46,7 +46,15 @@ template< class T > struct List {
 	List(const List& other);
 	List& operator=(List other);
 	void swap(List& other) noexcept;
+	void pop_front() noexcept;
 };
+
+template< class T >
+void List<T>::pop_front() noexcept {
+	if (fake->next != fake) {
+		erase_after(fake);
+	}
+}
 
 template< class T >
 void List<T>::clear() noexcept {     //очистить память
