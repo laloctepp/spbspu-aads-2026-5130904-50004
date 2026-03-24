@@ -43,6 +43,7 @@ template< class T > struct List {
 		::operator delete(fake); 
 	}
 	List(const List& other);
+	operator=(List other);
 };
 
 template< class T >
@@ -80,6 +81,17 @@ List<T>::List(const List& other) {
 			throw;
 		}
 	}
+}
+
+void swap(List& other) noexcept {
+    Node<T>* tmp = fake;
+    fake = other.fake;
+    other.fake = tmp;
+}
+
+List& operator=(List other) {
+    swap(other);
+    return *this;
 }
 
 template < class T >
