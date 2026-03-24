@@ -47,7 +47,31 @@ template< class T > struct List {
 	List& operator=(List other);
 	void swap(List& other) noexcept;
 	void pop_front() noexcept;
+	T& front();
+	const T& front() const;
+	void push_front(const T& d);
 };
+
+template< class T >
+void List<T>::push_front(const T& d) {
+	insert_after(fake, d);
+}
+
+template< class T >
+T& List<T>::front() {
+	if (fake->next != fake) {
+		return fake->next->val;
+	}
+	throw std::out_of_range("Empty list");
+}
+
+template< class T >
+const T& List<T>::front() const {
+		if (fake->next != fake) {
+		return fake->next->val;
+	}
+	throw std::out_of_range("Empty list");
+}
 
 template< class T >
 void List<T>::pop_front() noexcept {
