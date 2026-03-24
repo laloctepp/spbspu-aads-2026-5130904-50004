@@ -38,12 +38,14 @@ template< class T > struct List {
 		return LIter(fake);
 	}
 	void clear() noexcept;
+	List() : fake(new_fake<T>()) {}
 	~List() {
 		clear();
 		::operator delete(fake); 
 	}
 	List(const List& other);
-	operator=(List other);
+	List& operator=(List other);
+	void swap(List& other) noexcept;
 };
 
 template< class T >
@@ -83,13 +85,15 @@ List<T>::List(const List& other) {
 	}
 }
 
-void swap(List& other) noexcept {
+template< class T >
+void List<T>::swap(List<T>& other) noexcept {
     Node<T>* tmp = fake;
     fake = other.fake;
     other.fake = tmp;
 }
 
-List& operator=(List other) {
+template< class T >
+List<T>& List<T>::operator=(List<T> other) {
     swap(other);
     return *this;
 }
